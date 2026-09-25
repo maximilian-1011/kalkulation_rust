@@ -1,2 +1,2 @@
-mod lagerkennzahlen;
-mod beschaffung;
+pub mod beschaffung;
+pub mod lagerkennzahlen;

@@ -1,3 +1,4 @@
+use crate::kalkulation::lagerkennzahlen;
 use std::{collections::HashMap, io, io::Write};
 
 pub fn start_repl() {
@@ -21,6 +22,8 @@ pub fn start_repl() {
                 break;
             }
             Command::Help => call_help(),
+            Command::Umsatzhäufigkeit => break,
+            Command::AvarageStoreTime => break,
         }
     }
 }
@@ -38,6 +41,8 @@ pub fn clean_up_input(input: &str) -> String {
 enum Command {
     Help,
     Exit,
+    Umsatzhäufigkeit,
+    AvarageStoreTime,
 }
 
 struct CliCommand {
@@ -65,6 +70,35 @@ fn get_commands() -> HashMap<String, CliCommand> {
             command: Command::Exit,
         },
     );
+    command_map.insert(
+        String::from("um"),
+        CliCommand {
+            name: String::from("um"),
+            description: String::from("Brechne Umsatzhäufigkeit"),
+            command: Command::Umsatzhäufigkeit,
+        },
+    );
+    command_map.insert(
+        String::from("dld"),
+        CliCommand {
+            name: String::from("dld"),
+            description: String::from("Berechne durchschnittliche Lagerdauer"),
+            command: Command::AvarageStoreTime,
+        },
+    );
 
     command_map
+}
+
+fn get_values(parms: Vec<&str>) -> HashMap<String, f64> {
+    let mut output = HashMap::new();
+    let mut input = String::new();
+    for s in parms {
+        print!("{s}: ");
+        io::stdout().flush().unwrap();
+        io::stdin().read_line(&mut input).unwrap();
+        let val: f64 = input.trim().parse().unwrap_or(0.0);
+        output.insert(String::from(s), val);
+    }
+    output
 }
