@@ -1,4 +1,5 @@
 use crate::kalkulation::lagerkennzahlen;
+use crate::kalkulation::verkaufskalkulation;
 use std::{collections::HashMap, io, io::Write};
 
 pub fn start_repl() {
@@ -23,21 +24,18 @@ pub fn start_repl() {
             }
             Command::Help => call_help(),
             Command::Umschlagshäufigkeit => {
-                let parms: Vec<&str> = vec!["Umsatz", "Durchschnittliche Lagerdauer"];
+                let parms: Vec<&str> = vec!["Umsatz", "Durchschnittliche Lagerbestand"];
                 let val = get_values(parms);
                 let res = lagerkennzahlen::umschlagshäufigkeit(
                     *val.get("Umsatz").unwrap(),
-                    *val.get("Durchschnittliche Lagerdauer").unwrap(),
+                    *val.get("Durchschnittliche Lagerbestand").unwrap(),
                 );
                 println!("\nDas Ergebnis ist: {res}\n");
                 continue;
             }
             Command::AvarageStorage => {
-                let parms: Vec<&str> = vec![
-                    "Start", "Jan", "Feb", "März", "April", "Mai", "Juni", "Juli", "Aug", "Sep",
-                    "Okt", "Nov", "Dec",
-                ];
-                let val = get_values(parms);
+                let parms: Vec<String> = get_bestände();
+                let val = get_values(parms.iter().map(AsRef::as_ref).collect());
                 let bestände: Vec<f64> = val.into_values().collect();
                 let res = lagerkennzahlen::durchschnittlicher_lagerbestand(bestände);
                 println!("\nDas Ergebnis ist: {res}\n");
@@ -52,6 +50,28 @@ pub fn start_repl() {
                 println!("\nDas Ergebnis ist: {res}\n");
                 continue;
             }
+            Command::BVP => {
+                let parms: Vec<&str> = vec![
+                    "Listenrpreis",
+                    "Rabatt",
+                    "Skonto",
+                    "Bezugskosten",
+                    "Handlunskosten",
+                    "Gewinn",
+                    "Umsatzsteuer",
+                ];
+                let val = get_values(parms);
+                verkaufskalkulation::vollständigekalkulation(
+                    *val.get("Listenrpreis").unwrap(),
+                    *val.get("Rabatt").unwrap(),
+                    *val.get("Skonto").unwrap(),
+                    *val.get("Bezugskosten").unwrap(),
+                    *val.get("Handlunskosten").unwrap(),
+                    *val.get("Gewinn").unwrap(),
+                    *val.get("Umsatzsteuer").unwrap(),
+                );
+                continue;
+            }
         }
     }
 }
@@ -62,6 +82,7 @@ fn call_help() {
         println!("{}: {}", val.name, val.description);
     }
 }
+
 pub fn clean_up_input(input: &str) -> String {
     input.to_ascii_lowercase().trim().to_string()
 }
@@ -72,6 +93,7 @@ enum Command {
     Umschlagshäufigkeit,
     AvarageStorage,
     AvarageStoreTime,
+    BVP,
 }
 
 struct CliCommand {
@@ -123,7 +145,14 @@ fn get_commands() -> HashMap<String, CliCommand> {
             command: Command::AvarageStoreTime,
         },
     );
-
+    command_map.insert(
+        String::from("bvp"),
+        CliCommand {
+            name: String::from("bvp"),
+            description: String::from("Vollständige Bezugskalkulation"),
+            command: Command::BVP,
+        },
+    );
     command_map
 }
 
@@ -139,4 +168,51 @@ fn get_values(parms: Vec<&str>) -> HashMap<String, f64> {
         output.insert(String::from(s), val);
     }
     output
+}
+
+fn get_bestände() -> Vec<String> {
+    let mut input = String::new();
+    loop {
+        println!("Gib die Anzahl der Endbestände an");
+        print!("| 1 | 4 | 12 | : ");
+        io::stdout().flush().unwrap();
+        input.clear();
+        io::stdin().read_line(&mut input).unwrap();
+        let val: u8 = clean_up_input(&input).parse().unwrap();
+        match val {
+            1 => return vec!["Anfangsbestand".to_string(), "Endbestand".to_string()],
+            4 => {
+                return vec![
+                    "Anfangsbestand".to_string(),
+                    "1. Quartal".to_string(),
+                    "2. Quartal".to_string(),
+                    "3. Quartal".to_string(),
+                    "4. Quartal".to_string(),
+                ];
+            }
+            12 => {
+                return vec![
+                    "Anfangsbestand".to_string(),
+                    "Jan".to_string(),
+                    "Feb".to_string(),
+                    "März".to_string(),
+                    "April".to_string(),
+                    "Mai".to_string(),
+                    "Juni".to_string(),
+                    "Juli".to_string(),
+                    "Aug".to_string(),
+                    "Sep".to_string(),
+                    "Okt".to_string(),
+                    "Nov".to_string(),
+                    "Dez".to_string(),
+                ];
+            }
+            other => {
+                println!(
+                    "{other} ist keine valide Anzahl. Bitte gib eine valide Anzahl an Endbeständen ein"
+                );
+                continue;
+            }
+        }
+    }
 }
