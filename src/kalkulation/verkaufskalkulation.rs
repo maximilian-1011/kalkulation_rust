@@ -95,3 +95,9 @@ pub fn vereinfacht(kalkulationszuschlag: f64, bezugspreis: f64) -> f64 {
     println!("Bruttoverkaufspreis: {res}");
     res
 }
+
+pub fn kalkulationsfaktor(bezugspreis: f64, bruttoverkaufspreis: f64) -> f64 {
+    let kf = ((bruttoverkaufspreis / bezugspreis) * 100.0).round() / 100.0;
+    println!("Kalkulationsfaktor: {kf}");
+    kf
+}

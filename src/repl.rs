@@ -99,6 +99,15 @@ pub fn start_repl() {
                 );
                 continue;
             }
+            Command::KF => {
+                let parms: Vec<&str> = vec!["Bezugspreis", "Bruttoverkaufspreis"];
+                let val = get_values(parms);
+                verkaufskalkulation::kalkulationsfaktor(
+                    *val.get("Bezugspreis").unwrap(),
+                    *val.get("Bruttoverkaufspreis").unwrap(),
+                );
+                continue;
+            }
         }
     }
 }
@@ -124,6 +133,7 @@ enum Command {
     LZS,
     LZ,
     VV,
+    KF,
 }
 
 struct CliCommand {
@@ -205,6 +215,14 @@ fn get_commands() -> HashMap<String, CliCommand> {
             name: String::from("vv"),
             description: String::from("Verkürzte Vorwärtskalkulation"),
             command: Command::VV,
+        },
+    );
+    command_map.insert(
+        String::from("kf"),
+        CliCommand {
+            name: String::from("kf"),
+            description: String::from("Kalkulationsfaktor"),
+            command: Command::KF,
         },
     );
     command_map
