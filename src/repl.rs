@@ -53,22 +53,49 @@ pub fn start_repl() {
             Command::BVP => {
                 let parms: Vec<&str> = vec![
                     "Listenrpreis",
-                    "Rabatt",
-                    "Skonto",
+                    "Rabatt in %",
+                    "Skonto in %",
                     "Bezugskosten",
-                    "Handlunskosten",
-                    "Gewinn",
-                    "Umsatzsteuer",
+                    "Handlunskosten in %",
+                    "Gewinn in %",
+                    "Umsatzsteuer in %",
                 ];
                 let val = get_values(parms);
                 verkaufskalkulation::vollständigekalkulation(
                     *val.get("Listenrpreis").unwrap(),
-                    *val.get("Rabatt").unwrap(),
-                    *val.get("Skonto").unwrap(),
+                    *val.get("Rabatt in %").unwrap(),
+                    *val.get("Skonto in %").unwrap(),
                     *val.get("Bezugskosten").unwrap(),
-                    *val.get("Handlunskosten").unwrap(),
-                    *val.get("Gewinn").unwrap(),
-                    *val.get("Umsatzsteuer").unwrap(),
+                    *val.get("Handlunskosten in %").unwrap(),
+                    *val.get("Gewinn in %").unwrap(),
+                    *val.get("Umsatzsteuer in %").unwrap(),
+                );
+                continue;
+            }
+            Command::LZS => {
+                let parms: Vec<&str> = vec!["Jahreszinssatz", "Durchschnittliche Lagerdauer"];
+                let val = get_values(parms);
+                lagerkennzahlen::lagerzinssatz(
+                    *val.get("Jahreszinssatz").unwrap(),
+                    *val.get("Durchschnittliche Lagerdauer").unwrap(),
+                );
+                continue;
+            }
+            Command::LZ => {
+                let parms: Vec<&str> = vec!["Lagerzinssatz", "Durchschnittlicher Lagerbestand"];
+                let val = get_values(parms);
+                lagerkennzahlen::lagerzins(
+                    *val.get("Lagerzinssatz").unwrap(),
+                    *val.get("Durchschnittlicher Lagerbestand").unwrap(),
+                );
+                continue;
+            }
+            Command::VV => {
+                let parms: Vec<&str> = vec!["Kalkulationszuschlag in %", "Bezugspreis"];
+                let val = get_values(parms);
+                verkaufskalkulation::vereinfacht(
+                    *val.get("Kalkulationszuschlag in %").unwrap(),
+                    *val.get("Bezugspreis").unwrap(),
                 );
                 continue;
             }
@@ -94,6 +121,9 @@ enum Command {
     AvarageStorage,
     AvarageStoreTime,
     BVP,
+    LZS,
+    LZ,
+    VV,
 }
 
 struct CliCommand {
@@ -151,6 +181,30 @@ fn get_commands() -> HashMap<String, CliCommand> {
             name: String::from("bvp"),
             description: String::from("Vollständige Bezugskalkulation"),
             command: Command::BVP,
+        },
+    );
+    command_map.insert(
+        String::from("lzs"),
+        CliCommand {
+            name: String::from("lzs"),
+            description: String::from("Lagerzinssatz"),
+            command: Command::LZS,
+        },
+    );
+    command_map.insert(
+        String::from("lz"),
+        CliCommand {
+            name: String::from("lz"),
+            description: String::from("Lagerzinsen"),
+            command: Command::LZ,
+        },
+    );
+    command_map.insert(
+        String::from("vv"),
+        CliCommand {
+            name: String::from("vv"),
+            description: String::from("Verkürzte Vorwärtskalkulation"),
+            command: Command::VV,
         },
     );
     command_map

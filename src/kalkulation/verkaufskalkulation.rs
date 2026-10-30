@@ -78,6 +78,7 @@ pub fn vollständigekalkulation(
     gewinnzuschlag: f64,
     umsatzsteuer: f64,
 ) {
+    println!();
     let zieleinkaufspreis = zieleinkaufspreis(listenpreis, rabatt);
     let bareinkaufspreis = bareinkaufspreis(zieleinkaufspreis, skonto);
     let bezugspreis = beschaffungspreis(bareinkaufspreis, bezugskosten);
@@ -86,4 +87,11 @@ pub fn vollständigekalkulation(
     let bruttopreis = bruttoverkaufspreis(nettopreis, umsatzsteuer);
 
     println!("\nDas Ergebnis ist: {bruttopreis}€\n");
+}
+
+pub fn vereinfacht(kalkulationszuschlag: f64, bezugspreis: f64) -> f64 {
+    let kalkulationsfaktor = 1.0 + (kalkulationszuschlag.round() / 100.0);
+    let res = (bezugspreis * kalkulationsfaktor * 100.0).round() / 100.0;
+    println!("Bruttoverkaufspreis: {res}");
+    res
 }
