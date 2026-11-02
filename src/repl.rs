@@ -8,9 +8,19 @@ pub fn start_repl() {
     let command_map = get_commands();
     loop {
         print!("Command > ");
-        io::stdout().flush().unwrap();
+        match io::stdout().flush() {
+            Ok(_) => (),
+            Err(e) => {
+                println!("{e}");
+            }
+        };
         input.clear();
-        io::stdin().read_line(&mut input).unwrap();
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => (),
+            Err(e) => {
+                println!("{e}");
+            }
+        };
         let clean_input = clean_up_input(&input);
         let cmd = match command_map.get(&clean_input) {
             Some(c) => c,
@@ -27,8 +37,20 @@ pub fn start_repl() {
                 let parms: Vec<&str> = vec!["Umsatz", "Durchschnittliche Lagerbestand"];
                 let val = get_values(parms);
                 let res = lagerkennzahlen::umschlagshäufigkeit(
-                    *val.get("Umsatz").unwrap(),
-                    *val.get("Durchschnittliche Lagerbestand").unwrap(),
+                    match val.get("Umsatz") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Fehler beim lesen des Umsatzes");
+                            continue;
+                        }
+                    },
+                    match val.get("Durchschnittliche Lagerbestand") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Fehler beim lesen des Durchschnittlichen Lagerbestandes");
+                            continue;
+                        }
+                    },
                 );
                 println!("\nDas Ergebnis ist: {res}\n");
                 continue;
@@ -45,7 +67,13 @@ pub fn start_repl() {
                 let parms: Vec<&str> = vec!["Umschlagshäufigkeit"];
                 let val = get_values(parms);
                 let res = lagerkennzahlen::durchschnittliche_lagerdauer(
-                    *val.get("Umschlagshäufigkeit").unwrap(),
+                    match val.get("Umschlagshäufigkeit") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten.");
+                            continue;
+                        }
+                    },
                 );
                 println!("\nDas Ergebnis ist: {res}\n");
                 continue;
@@ -62,13 +90,55 @@ pub fn start_repl() {
                 ];
                 let val = get_values(parms);
                 verkaufskalkulation::vollständigekalkulation(
-                    *val.get("Listenrpreis").unwrap(),
-                    *val.get("Rabatt in %").unwrap(),
-                    *val.get("Skonto in %").unwrap(),
-                    *val.get("Bezugskosten").unwrap(),
-                    *val.get("Handlunskosten in %").unwrap(),
-                    *val.get("Gewinn in %").unwrap(),
-                    *val.get("Umsatzsteuer in %").unwrap(),
+                    match val.get("Listenrpreis") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten.");
+                            continue;
+                        }
+                    },
+                    match val.get("Rabatt in %") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten.");
+                            continue;
+                        }
+                    },
+                    match val.get("Skonto in %") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten.");
+                            continue;
+                        }
+                    },
+                    match val.get("Bezugskosten") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten.");
+                            continue;
+                        }
+                    },
+                    match val.get("Handlunskosten in %") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten.");
+                            continue;
+                        }
+                    },
+                    match val.get("Gewinn in %") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten.");
+                            continue;
+                        }
+                    },
+                    match val.get("Umsatzsteuer in %") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten.");
+                            continue;
+                        }
+                    },
                 );
                 continue;
             }
@@ -76,8 +146,20 @@ pub fn start_repl() {
                 let parms: Vec<&str> = vec!["Jahreszinssatz", "Durchschnittliche Lagerdauer"];
                 let val = get_values(parms);
                 lagerkennzahlen::lagerzinssatz(
-                    *val.get("Jahreszinssatz").unwrap(),
-                    *val.get("Durchschnittliche Lagerdauer").unwrap(),
+                    match val.get("Jahreszinssatz") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten");
+                            continue;
+                        }
+                    },
+                    match val.get("Durchschnittliche Lagerdauer") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten");
+                            continue;
+                        }
+                    },
                 );
                 continue;
             }
@@ -85,8 +167,20 @@ pub fn start_repl() {
                 let parms: Vec<&str> = vec!["Lagerzinssatz", "Durchschnittlicher Lagerbestand"];
                 let val = get_values(parms);
                 lagerkennzahlen::lagerzins(
-                    *val.get("Lagerzinssatz").unwrap(),
-                    *val.get("Durchschnittlicher Lagerbestand").unwrap(),
+                    match val.get("Lagerzinssatz") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten");
+                            continue;
+                        }
+                    },
+                    match val.get("Durchschnittlicher Lagerbestand") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten");
+                            continue;
+                        }
+                    },
                 );
                 continue;
             }
@@ -94,8 +188,20 @@ pub fn start_repl() {
                 let parms: Vec<&str> = vec!["Kalkulationszuschlag in %", "Bezugspreis"];
                 let val = get_values(parms);
                 verkaufskalkulation::vereinfacht(
-                    *val.get("Kalkulationszuschlag in %").unwrap(),
-                    *val.get("Bezugspreis").unwrap(),
+                    match val.get("Kalkulationszuschlag in %") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten");
+                            continue;
+                        }
+                    },
+                    match val.get("Bezugspreis") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten");
+                            continue;
+                        }
+                    },
                 );
                 continue;
             }
@@ -103,8 +209,20 @@ pub fn start_repl() {
                 let parms: Vec<&str> = vec!["Bezugspreis", "Bruttoverkaufspreis"];
                 let val = get_values(parms);
                 verkaufskalkulation::kalkulationsfaktor(
-                    *val.get("Bezugspreis").unwrap(),
-                    *val.get("Bruttoverkaufspreis").unwrap(),
+                    match val.get("Bezugspreis") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten");
+                            continue;
+                        }
+                    },
+                    match val.get("Bruttoverkaufspreis") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Ein Unerwarteter Fehler ist aufgetreten");
+                            continue;
+                        }
+                    },
                 );
                 continue;
             }
@@ -233,9 +351,19 @@ fn get_values(parms: Vec<&str>) -> HashMap<String, f64> {
     let mut input = String::new();
     for s in parms {
         print!("{s}: ");
-        io::stdout().flush().unwrap();
+        match io::stdout().flush() {
+            Ok(_) => (),
+            Err(e) => {
+                println!("{e}");
+            }
+        };
         input.clear();
-        io::stdin().read_line(&mut input).unwrap();
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => (),
+            Err(e) => {
+                println!("{e}");
+            }
+        };
         let val: f64 = input.trim().parse().unwrap_or(0.0);
         output.insert(String::from(s), val);
     }
@@ -247,10 +375,20 @@ fn get_bestände() -> Vec<String> {
     loop {
         println!("Gib die Anzahl der Endbestände an");
         print!("| 1 | 4 | 12 | : ");
-        io::stdout().flush().unwrap();
+        match io::stdout().flush() {
+            Ok(_) => (),
+            Err(e) => {
+                println!("{e}");
+            }
+        };
         input.clear();
-        io::stdin().read_line(&mut input).unwrap();
-        let val: u8 = clean_up_input(&input).parse().unwrap();
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => (),
+            Err(e) => {
+                println!("{e}");
+            }
+        };
+        let val: u8 = clean_up_input(&input).parse().unwrap_or(1);
         match val {
             1 => return vec!["Anfangsbestand".to_string(), "Endbestand".to_string()],
             4 => {
