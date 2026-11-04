@@ -78,7 +78,7 @@ pub fn start_repl() {
                 println!("\nDas Ergebnis ist: {res}\n");
                 continue;
             }
-            Command::BVP => {
+            Command::BruttoVerkaufsPreis => {
                 let parms: Vec<&str> = vec![
                     "Listenrpreis",
                     "Rabatt in %",
@@ -142,7 +142,7 @@ pub fn start_repl() {
                 );
                 continue;
             }
-            Command::LZS => {
+            Command::LagerZinsSatz => {
                 let parms: Vec<&str> = vec!["Jahreszinssatz", "Durchschnittliche Lagerdauer"];
                 let val = get_values(parms);
                 lagerkennzahlen::lagerzinssatz(
@@ -163,7 +163,7 @@ pub fn start_repl() {
                 );
                 continue;
             }
-            Command::LZ => {
+            Command::LagerZins => {
                 let parms: Vec<&str> = vec!["Lagerzinssatz", "Durchschnittlicher Lagerbestand"];
                 let val = get_values(parms);
                 lagerkennzahlen::lagerzins(
@@ -184,7 +184,7 @@ pub fn start_repl() {
                 );
                 continue;
             }
-            Command::VV => {
+            Command::VerküztesVerfahren => {
                 let parms: Vec<&str> = vec!["Kalkulationszuschlag in %", "Bezugspreis"];
                 let val = get_values(parms);
                 verkaufskalkulation::vereinfacht(
@@ -205,7 +205,7 @@ pub fn start_repl() {
                 );
                 continue;
             }
-            Command::KF => {
+            Command::KalkulationsFaktor => {
                 let parms: Vec<&str> = vec!["Bezugspreis", "Bruttoverkaufspreis"];
                 let val = get_values(parms);
                 verkaufskalkulation::kalkulationsfaktor(
@@ -247,11 +247,11 @@ enum Command {
     Umschlagshäufigkeit,
     AvarageStorage,
     AvarageStoreTime,
-    BVP,
-    LZS,
-    LZ,
-    VV,
-    KF,
+    BruttoVerkaufsPreis,
+    LagerZinsSatz,
+    LagerZins,
+    VerküztesVerfahren,
+    KalkulationsFaktor,
 }
 
 struct CliCommand {
@@ -308,7 +308,7 @@ fn get_commands() -> HashMap<String, CliCommand> {
         CliCommand {
             name: String::from("bvp"),
             description: String::from("Vollständige Bezugskalkulation"),
-            command: Command::BVP,
+            command: Command::BruttoVerkaufsPreis,
         },
     );
     command_map.insert(
@@ -316,7 +316,7 @@ fn get_commands() -> HashMap<String, CliCommand> {
         CliCommand {
             name: String::from("lzs"),
             description: String::from("Lagerzinssatz"),
-            command: Command::LZS,
+            command: Command::LagerZinsSatz,
         },
     );
     command_map.insert(
@@ -324,7 +324,7 @@ fn get_commands() -> HashMap<String, CliCommand> {
         CliCommand {
             name: String::from("lz"),
             description: String::from("Lagerzinsen"),
-            command: Command::LZ,
+            command: Command::LagerZins,
         },
     );
     command_map.insert(
@@ -332,7 +332,7 @@ fn get_commands() -> HashMap<String, CliCommand> {
         CliCommand {
             name: String::from("vv"),
             description: String::from("Verkürzte Vorwärtskalkulation"),
-            command: Command::VV,
+            command: Command::VerküztesVerfahren,
         },
     );
     command_map.insert(
@@ -340,7 +340,7 @@ fn get_commands() -> HashMap<String, CliCommand> {
         CliCommand {
             name: String::from("kf"),
             description: String::from("Kalkulationsfaktor"),
-            command: Command::KF,
+            command: Command::KalkulationsFaktor,
         },
     );
     command_map
