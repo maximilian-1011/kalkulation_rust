@@ -1,11 +1,11 @@
+use crate::kalkulation::beschaffung;
+
 pub fn zieleinkaufspreis(listenpreis: f64, rabatt: f64) -> f64 {
     if rabatt <= 0.0 {
         println!("Zieleinkaufspreis: {listenpreis}");
         listenpreis
     } else {
-        let rabatt_in_euro = listenpreis * (rabatt / 100.0);
-        let output = listenpreis - rabatt_in_euro;
-        let res = (output * 100.0).round() / 100.0;
+        let res = beschaffung::preis_reduzierung(listenpreis, rabatt);
         println!("Zieleinkaufspreis: {res}");
         res
     }
@@ -16,16 +16,17 @@ pub fn bareinkaufspreis(zieleinkaufspreis: f64, skonto: f64) -> f64 {
         println!("Barkeinkaufspreis: {zieleinkaufspreis}");
         zieleinkaufspreis
     } else {
-        let rabatt_in_euro = zieleinkaufspreis * (skonto / 100.0);
-        let output = zieleinkaufspreis - rabatt_in_euro;
-        let result = (output * 100.0).round() / 100.0;
+        let result = beschaffung::preis_reduzierung(zieleinkaufspreis, skonto);
         println!("Barkeinkaufspreis: {result}");
         result
     }
 }
 
 fn beschaffungspreis(bareinkaufspreis: f64, bezugskosten: f64) -> f64 {
-    println!("Bezugspreis: {}", bareinkaufspreis + bezugskosten);
+    println!(
+        "Bezugspreis: {}",
+        beschaffung::bezugspreis(bareinkaufspreis, bezugskosten)
+    );
     bareinkaufspreis + bezugskosten
 }
 

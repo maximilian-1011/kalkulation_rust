@@ -1,6 +1,6 @@
-pub fn preis_reduzierung(listenpreis: f64, rabatt: f64) -> f64 {
+pub fn preis_reduzierung(preis: f64, rabatt: f64) -> f64 {
     let rabatt_decimal: f64 = rabatt / 100.0;
-    let new_price: f64 = listenpreis - (listenpreis * rabatt_decimal);
+    let new_price: f64 = preis - (preis * rabatt_decimal);
     let clean_price: f64 = (new_price * 100.0).round() / 100.0;
     clean_price
 }
