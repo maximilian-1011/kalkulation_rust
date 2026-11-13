@@ -102,3 +102,38 @@ pub fn kalkulationsfaktor(bezugspreis: f64, bruttoverkaufspreis: f64) -> f64 {
     println!("Kalkulationsfaktor: {kf}");
     kf
 }
+
+pub fn kalkulationszuschlag(bezugspreis: f64, bruttoverkaufspreis: f64) -> f64 {
+    let zuschlag: f64 = ((bruttoverkaufspreis - bezugspreis) / bezugspreis) * 100.0;
+    let res: f64 = (zuschlag * 100.0).round() / 100.0;
+    println!("kalkulationszuschlag: {res}");
+    res
+}
+
+pub fn rückwärtskalkulation(
+    bruttoverkaufspreis: f64,
+    umsatzsteuer: f64,
+    gewinnzuschlag: f64,
+    handlungskosten: f64,
+    bezugskosten: f64,
+    skonto: f64,
+    rabatt: f64,
+) -> f64 {
+    let nettoverkaufspreis: f64 =
+        ((bruttoverkaufspreis / (1.0 + (umsatzsteuer / 100.0))) * 100.0).round() / 100.0;
+    println!("Nettoverkaufspreis: {nettoverkaufspreis}");
+    let selbstkostenpreis: f64 =
+        ((nettoverkaufspreis / (1.0 + (gewinnzuschlag / 100.0))) * 100.0).round() / 100.0;
+    println!("Selbstkostenpreis: {selbstkostenpreis}");
+    let bezugspreis: f64 =
+        ((selbstkostenpreis / (1.0 + (handlungskosten / 100.0))) * 100.0).round() / 100.0;
+    println!("Bezugspreis: {bezugspreis}");
+    let bareinkaufspreis: f64 = ((bezugspreis - bezugskosten) * 100.0).round() / 100.0;
+    println!("Bareinkaufspreis: {bareinkaufspreis}");
+    let zeileinkaufspreis: f64 =
+        ((bareinkaufspreis / (1.0 - (skonto / 100.0))) * 100.0).round() / 100.0;
+    println!("Zieleinkaufspreis: {zeileinkaufspreis}");
+    let listenpreis: f64 = ((zeileinkaufspreis / (1.0 - (rabatt / 100.0))) * 100.0).round() / 100.0;
+    println!("Listenpreis: {listenpreis}");
+    listenpreis
+}

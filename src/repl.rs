@@ -226,6 +226,63 @@ pub fn start_repl() {
                 );
                 continue;
             }
+            Command::DurchschnittlicherLagerbestandInEuro => {
+                let parms: Vec<&str> = vec!["Bezugspreis in €"];
+                let bestände = get_values(get_bestände().iter().map(AsRef::as_ref).collect());
+                let bestände: Vec<f64> = bestände.into_values().collect();
+                let preis = get_values(parms);
+                lagerkennzahlen::durchschnittlicher_lagerbestand_in_euro(
+                    bestände,
+                    match preis.get("Bezugspreis in €") {
+                        Some(val) => *val,
+                        None => {
+                            println!("Es konnte kein Bezugspreis ermittelt werden");
+                            continue;
+                        }
+                    },
+                );
+            }
+            Command::KalkulationsZuschlag => {
+                let parms: Vec<&str> = vec!["Bezugspreis", "Bruttoverkaufspreis"];
+                let val = get_values(parms);
+                verkaufskalkulation::kalkulationszuschlag(
+                    match val.get("Bezugspreis") {
+                        Some(x) => *x,
+                        None => {
+                            println!("Something went wrong!");
+                            continue;
+                        }
+                    },
+                    match val.get("Bruttoverkaufspreis") {
+                        Some(x) => *x,
+                        None => {
+                            println!("Something went wrong!");
+                            continue;
+                        }
+                    },
+                );
+            }
+            Command::RückwärtsKalklation => {
+                let parms: Vec<&str> = vec![
+                    "Bruttoverkaufspreis",
+                    "Umsatzsteuer",
+                    "Gewinn",
+                    "Handlunskosten",
+                    "Bezugskosten",
+                    "Skonto",
+                    "Rabatt",
+                ];
+                let val = get_values(parms);
+                verkaufskalkulation::rückwärtskalkulation(
+                    *val.get("Bruttoverkaufspreis").unwrap(),
+                    *val.get("Umsatzsteuer").unwrap(),
+                    *val.get("Gewinn").unwrap(),
+                    *val.get("Handlunskosten").unwrap(),
+                    *val.get("Bezugskosten").unwrap(),
+                    *val.get("Skonto").unwrap(),
+                    *val.get("Rabatt").unwrap(),
+                );
+            }
         }
     }
 }
@@ -251,7 +308,10 @@ enum Command {
     LagerZinsSatz,
     LagerZins,
     VerküztesVerfahren,
+    RückwärtsKalklation,
     KalkulationsFaktor,
+    KalkulationsZuschlag,
+    DurchschnittlicherLagerbestandInEuro,
 }
 
 struct CliCommand {
@@ -341,6 +401,30 @@ fn get_commands() -> HashMap<String, CliCommand> {
             name: String::from("kf"),
             description: String::from("Kalkulationsfaktor"),
             command: Command::KalkulationsFaktor,
+        },
+    );
+    command_map.insert(
+        String::from("dlbe"),
+        CliCommand {
+            name: String::from("dlbe"),
+            description: String::from("Durchschnittlicher Lagerbestand in €"),
+            command: Command::DurchschnittlicherLagerbestandInEuro,
+        },
+    );
+    command_map.insert(
+        String::from("kz"),
+        CliCommand {
+            name: String::from("kz"),
+            description: String::from("Kalkulationszuschlag"),
+            command: Command::KalkulationsZuschlag,
+        },
+    );
+    command_map.insert(
+        String::from("rk"),
+        CliCommand {
+            name: String::from("rk"),
+            description: String::from("Rückwärtskalkulation"),
+            command: Command::RückwärtsKalklation,
         },
     );
     command_map

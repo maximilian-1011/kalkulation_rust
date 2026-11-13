@@ -9,6 +9,15 @@ pub fn durchschnittlicher_lagerbestand(bestände: Vec<f64>) -> f64 {
     (output * 100.0).round() / 100.0
 }
 
+pub fn durchschnittlicher_lagerbestand_in_euro(bestände: Vec<f64>, preis: f64) -> f64 {
+    let sum_of_months: f64 = bestände.iter().sum();
+    let durchschnittlicher_lagerbestand: f64 = sum_of_months / (bestände.len() as f64);
+    let durchschnittlicher_lagerbestand_euro: f64 = durchschnittlicher_lagerbestand * preis;
+    let res = (durchschnittlicher_lagerbestand_euro * 100.0).round() / 100.0;
+    println!("Durchschnittlicher Lagerbestand in €: {res}€");
+    res
+}
+
 pub fn durchschnittliche_lagerdauer(umschlag: f64) -> f64 {
     let res = 360.0 / umschlag;
     (res * 100.0).round() / 100.0
