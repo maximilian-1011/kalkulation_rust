@@ -56,9 +56,7 @@ pub fn start_repl() {
                 continue;
             }
             Command::AvarageStorage => {
-                let parms: Vec<String> = get_bestände();
-                let val = get_values(parms.iter().map(AsRef::as_ref).collect());
-                let bestände: Vec<f64> = val.into_values().collect();
+                let bestände: Vec<f64> = get_bestände();
                 let res = lagerkennzahlen::durchschnittlicher_lagerbestand(bestände);
                 println!("\nDas Ergebnis ist: {res}\n");
                 continue;
@@ -228,8 +226,7 @@ pub fn start_repl() {
             }
             Command::DurchschnittlicherLagerbestandInEuro => {
                 let parms: Vec<&str> = vec!["Bezugspreis in €"];
-                let bestände = get_values(get_bestände().iter().map(AsRef::as_ref).collect());
-                let bestände: Vec<f64> = bestände.into_values().collect();
+                let bestände: Vec<f64> = get_bestände();
                 let preis = get_values(parms);
                 lagerkennzahlen::durchschnittlicher_lagerbestand_in_euro(
                     bestände,
@@ -454,59 +451,59 @@ fn get_values(parms: Vec<&str>) -> HashMap<String, f64> {
     output
 }
 
-fn get_bestände() -> Vec<String> {
+fn get_bestände() -> Vec<f64> {
     let mut input = String::new();
-    loop {
-        println!("Gib die Anzahl der Endbestände an");
-        print!("| 1 | 4 | 12 | : ");
+    let mut bestände: Vec<f64> = Vec::new();
+    print!("Gib die Anzahl der Endbestände an: ");
+    match io::stdout().flush() {
+        Ok(_) => (),
+        Err(e) => {
+            println!("{e}");
+        }
+    };
+    input.clear();
+    match io::stdin().read_line(&mut input) {
+        Ok(_) => (),
+        Err(e) => {
+            println!("{e}");
+        }
+    };
+    let val: u8 = clean_up_input(&input).parse().unwrap_or(1);
+
+    print!("Anfangsbestand: ");
+    match io::stdout().flush() {
+        Ok(_) => (),
+        Err(e) => {
+            println!("{e}");
+        }
+    };
+    input.clear();
+    match io::stdin().read_line(&mut input) {
+        Ok(_) => (),
+        Err(e) => {
+            println!("{e}");
+        }
+    }
+    let anfangsbestand: f64 = clean_up_input(&input).parse().unwrap_or(0.0);
+    bestände.push(anfangsbestand);
+    for i in 1..=val {
+        print!("{i}. Bestand: ");
         match io::stdout().flush() {
             Ok(_) => (),
             Err(e) => {
                 println!("{e}");
             }
-        };
+        }
         input.clear();
         match io::stdin().read_line(&mut input) {
             Ok(_) => (),
             Err(e) => {
-                println!("{e}");
-            }
-        };
-        let val: u8 = clean_up_input(&input).parse().unwrap_or(1);
-        match val {
-            1 => return vec!["Anfangsbestand".to_string(), "Endbestand".to_string()],
-            4 => {
-                return vec![
-                    "Anfangsbestand".to_string(),
-                    "1. Quartal".to_string(),
-                    "2. Quartal".to_string(),
-                    "3. Quartal".to_string(),
-                    "4. Quartal".to_string(),
-                ];
-            }
-            12 => {
-                return vec![
-                    "Anfangsbestand".to_string(),
-                    "Jan".to_string(),
-                    "Feb".to_string(),
-                    "März".to_string(),
-                    "April".to_string(),
-                    "Mai".to_string(),
-                    "Juni".to_string(),
-                    "Juli".to_string(),
-                    "Aug".to_string(),
-                    "Sep".to_string(),
-                    "Okt".to_string(),
-                    "Nov".to_string(),
-                    "Dez".to_string(),
-                ];
-            }
-            other => {
-                println!(
-                    "{other} ist keine valide Anzahl. Bitte gib eine valide Anzahl an Endbeständen ein"
-                );
-                continue;
+                println!("{e}")
             }
         }
+        let bestand: f64 = clean_up_input(&input).parse().unwrap_or(0.0);
+        bestände.push(bestand);
     }
+
+    bestände
 }
